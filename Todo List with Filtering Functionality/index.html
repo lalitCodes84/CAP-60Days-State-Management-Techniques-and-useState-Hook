@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo List</title>
+  <style>
+    /* Basic styles for form and buttons */
+    form {
+      margin-bottom: 10px;
+    }
+    button {
+      margin-right: 5px;
+    }
+    /* Style for completed tasks (strikethrough) */
+    ul li span {
+      text-decoration: none;
+    }
+    ul li input[type="checkbox"]:checked + span {
+      text-decoration: line-through;
+    }
+    /* Container styles */
+    div {
+      padding: 20px;
+      background-color: skyblue;
+      margin: 20px;
+    }
+    /* Button styles */
+    div button {
+      background-color: skyblue;
+      border: 1px solid #fff;
+      padding: 5px 10px;
+      margin-right: 10px;
+      color: #fff;
+      cursor: pointer;
+    }
+    div button:hover {
+      background-color: #0099cc;
+    }
+    /* Input styles */
+    input[type="text"] {
+      padding: 5px;
+      margin-right: 10px;
+    }
+    /* List styles */
+    ul {
+      padding-left: 20px;
+    }
+    ul li {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function TodoApp() {
+      // State for managing tasks
+      const [tasks, setTasks] = useState([]);
+      // State for managing filter option (All, Active, Completed)
+      const [filter, setFilter] = useState('All');
+
+      // Function to handle adding new task
+      const addTask = (taskName) => {
+        if (taskName.trim() !== '') {
+          const newTask = { id: Date.now(), name: taskName, completed: false };
+          setTasks([...tasks, newTask]);
+        }
+      };
+
+      // Function to handle marking task as completed
+      const toggleComplete = (taskId) => {
+        const updatedTasks = tasks.map(task =>
+          task.id === taskId ? { ...task, completed: !task.completed } : task
+        );
+        setTasks(updatedTasks);
+      };
+
+      // Function to handle removing task
+      const removeTask = (taskId) => {
+        const updatedTasks = tasks.filter(task => task.id !== taskId);
+        setTasks(updatedTasks);
+      };
+
+      // Function to handle filtering tasks
+      const handleFilter = (filterOption) => {
+        setFilter(filterOption);
+      };
+
+      // Apply filter to tasks based on filter option
+      let filteredTasks = tasks;
+      if (filter === 'Active') {
+        filteredTasks = tasks.filter(task => !task.completed);
+      } else if (filter === 'Completed') {
+        filteredTasks = tasks.filter(task => task.completed);
+      }
+
+      // JSX for rendering Todo List
+      return (
+        <div>
+          {/* Form for adding new task */}
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            addTask(e.target.task.value);
+            e.target.task.value = '';
+          }}>
+            <input type="text" name="task" placeholder="Add new task" />
+            <button type="submit">Add Task</button>
+          </form>
+
+          {/* Buttons for filtering tasks */}
+          <div>
+            <button onClick={() => handleFilter('All')}>All</button>
+            <button onClick={() => handleFilter('Active')}>Active</button>
+            <button onClick={() => handleFilter('Completed')}>Completed</button>
+          </div>
+
+          {/* Display tasks based on filter */}
+          <ul>
+            {filteredTasks.map(task => (
+              <li key={task.id}>
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => toggleComplete(task.id)}
+                />
+                <span>{task.name}</span>
+                <button onClick={() => removeTask(task.id)}>Delete</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<TodoApp />, document.getElementById("root"));
+  </script>
+</body>
+</html>

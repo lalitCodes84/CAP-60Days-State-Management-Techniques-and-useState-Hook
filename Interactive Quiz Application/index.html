@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Application</title>
+  <style>
+    /* CSS styles for body */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Styles for the parent container */
+    .parent {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    /* Styles for the quiz card */
+    .quiz-card {
+      background-color: crimson;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Styles for headings inside the quiz card */
+    .quiz-card h3 {
+      margin-top: 0;
+    }
+
+    /* Styles for the options list */
+    .options-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    /* Styles for each option */
+    .options-list li {
+      margin-bottom: 8px;
+    }
+
+    /* Styles for option labels */
+    .options-list label {
+      cursor: pointer;
+    }
+
+    /* Styles for radio inputs */
+    .options-list input[type="radio"] {
+      margin-right: 8px;
+    }
+
+    /* Styles for the submit button */
+    .submit-btn {
+      background-color: black;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Hover styles for the submit button */
+    .submit-btn:hover {
+      background-color: #333;
+    }
+
+    /* Styles for the score section */
+    .score-section {
+      background-color: crimson;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Styles for the restart button */
+    .restart-btn {
+      background-color: black;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Hover styles for the restart button */
+    .restart-btn:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Include React and Babel for JSX compilation -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    // Define the Quiz component
+    function Quiz() {
+      // Array of quiz questions with options and correct answers
+      const questions = [
+        {
+          question: "What is the capital of France?",
+          options: ["Paris", "London", "Berlin", "Rome"],
+          correctAnswer: "Paris"
+        },
+        {
+          question: "Which planet is known as the Red Planet?",
+          options: ["Earth", "Mars", "Jupiter", "Venus"],
+          correctAnswer: "Mars"
+        },
+        {
+          question: "Who wrote 'To Kill a Mockingbird'?",
+          options: ["Mark Twain", "Harper Lee", "Ernest Hemingway", "J.K. Rowling"],
+          correctAnswer: "Harper Lee"
+        }
+      ];
+
+      // State variables for storing answers, score, and showing/hiding score
+      const [answers, setAnswers] = useState(Array(questions.length).fill(""));
+      const [showScore, setShowScore] = useState(false);
+      const [score, setScore] = useState(0);
+
+      // Function to handle changing answers for each question
+      const handleAnswerChange = (index, selectedAnswer) => {
+        const newAnswers = [...answers];
+        newAnswers[index] = selectedAnswer;
+        setAnswers(newAnswers);
+      };
+
+      // Function to handle quiz submission
+      const handleSubmit = () => {
+        let newScore = 0;
+        answers.forEach((answer, index) => {
+          if (answer === questions[index].correctAnswer) {
+            newScore++;
+          }
+        });
+        setScore(newScore);
+        setShowScore(true);
+      };
+
+      // Function to restart the quiz
+      const restartQuiz = () => {
+        setShowScore(false);
+        setAnswers(Array(questions.length).fill(""));
+        setScore(0);
+      };
+
+      // Render the quiz component with conditional rendering for showing score
+      return (
+        <div className="parent">
+          {!showScore ? (
+            <div className="quiz-card">
+              {/* Map through questions to display each question and options */}
+              {questions.map((question, index) => (
+                <div key={index}>
+                  <h3>{question.question}</h3>
+                  <ul className="options-list">
+                    {/* Map through options for each question */}
+                    {question.options.map((option, optionIndex) => (
+                      <li key={optionIndex}>
+                        <label>
+                          <input
+                            type="radio"
+                            name={`question-${index}`}
+                            value={option}
+                            checked={answers[index] === option}
+                            onChange={() => handleAnswerChange(index, option)}
+                          />
+                          {option}
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              {/* Button to submit the quiz */}
+              <button className="submit-btn" onClick={handleSubmit}>Submit</button>
+            </div>
+          ) : (
+            <div className="score-section">
+              {/* Display the score and button to restart the quiz */}
+              <h2>Your Score: {score}/{questions.length}</h2>
+              <button className="restart-btn" onClick={restartQuiz}>Restart Quiz</button>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Render the Quiz component to the root element in the HTML
+    ReactDOM.render(<Quiz />, document.getElementById("root"));
+  </script>
+</body>
+</html>
