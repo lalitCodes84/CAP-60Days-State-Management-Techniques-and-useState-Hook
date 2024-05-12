@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      label {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: bold;
+      }
+      input {
+        width: 10%;
+      }
+      .color-Picker-Parent {
+        text-align: center;
+      }
+      .color-Picker-Parent > div {
+        margin: auto;
+        border: 5px solid rgb(15, 13, 13);
+        width: 24%;
+        height: 20vh;
+        text-align: center;
+        margin-top: 5vh;
+      }
+    </style>
+    <title>iCP</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+      const { useState } = React;
+
+      const ColorViewer = () => {
+        const [inputColor, setInputColor] = useState("");
+        const [displayColor, setDisplayColor] = useState("crimson");
+
+        // Here I have created function to update color
+
+        const updateColor = () => {
+          // Validating input as a valid hex color code
+          if (/^#[0-9A-F]{6}$/i.test(inputColor)) {
+            setDisplayColor(inputColor);
+          } else {
+            alert("Please enter a valid hex color code (e.g., #RRGGBB)");
+          }
+        };
+
+
+        return (
+          <div className="color-Picker-Parent">
+            <label>Input HEX Color Code :&nbsp;</label>
+            <input
+              type="text"
+              placeholder="Enter color code"
+              value={inputColor}
+              onChange={(e) => setInputColor(e.target.value)}
+            />
+            <button onClick={updateColor}>Show Color</button>
+            <div style={{ backgroundColor: displayColor }}></div>
+          </div>
+        );
+      };
+
+      ReactDOM.render(<ColorViewer />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
